@@ -1,11 +1,42 @@
 group 'com.pnj'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven'
 
-sourceCompatibility = 1.5
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+buildDir = 'build'
+defaultTasks 'build'
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+    test {
+        java {
+            srcDir 'src/test/java'
+        }
+        resources {
+            srcDir 'src/test/resources'
+        }
+    }
+}
 
 repositories {
+    mavenLocal()
+    maven { url "http://10.0.8.178:8081/nexus/content/groups/public"}
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    maven { url "http://repo.springsource.org/libs-snapshot" }
+    maven { url "http://repo.springsource.org/plugins-release" }
+    maven { url "http://repo.eaio.com/maven2" }
     mavenCentral()
 }
 
