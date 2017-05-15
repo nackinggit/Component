@@ -1,0 +1,14 @@
+/dist/
+/doc/
+*.class
+*.iml
+*.ipr
+*.iws
+*.log
+src/main/webapp/WEB-INF/classes/
+src/main/webapp/WEB-INF/lib/
+.gradle
+build
+out
+.idea
+
