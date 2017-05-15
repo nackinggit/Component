@@ -32,7 +32,6 @@ sourceSets {
 
 repositories {
     mavenLocal()
-    maven { url "http://10.0.8.178:8081/nexus/content/groups/public"}
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     maven { url "http://repo.springsource.org/libs-snapshot" }
     maven { url "http://repo.springsource.org/plugins-release" }
