@@ -46,5 +46,8 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '21.0'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
-
+    // https://mvnrepository.com/artifact/com.lmax/disruptor
+    compile group: 'com.lmax', name: 'disruptor', version: '3.3.6'
+    // https://mvnrepository.com/artifact/org.springframework/spring-messaging
+    compile group: 'org.springframework', name: 'spring-messaging', version: '4.3.8.RELEASE'
 }
