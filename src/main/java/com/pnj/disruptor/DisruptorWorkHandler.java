@@ -1,5 +1,7 @@
 package com.pnj.disruptor;
 
+import com.lmax.disruptor.WorkHandler;
+
 /**
  * <p>Description:</p>
  * <p>Copyright: Copyright  (c) 2017</p>
@@ -7,18 +9,7 @@ package com.pnj.disruptor;
  * <p>Email: pengnanjing@sensetime.com</p>
  *
  * @author nanjing
- * @date 17-5-19:上午11:19
+ * @date 17-5-19:下午4:19
  */
-public class EventWrap<V> {
-    private V data;
-
-    public void setData(V v) {
-        this.data = v;
-    }
-
-    public V getData() {
-        return data;
-    }
+public interface DisruptorWorkHandler<V> extends WorkHandler<EventWrap<V>> {
 }
-
-

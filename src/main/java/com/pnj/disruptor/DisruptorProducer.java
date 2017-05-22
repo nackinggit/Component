@@ -1,11 +1,11 @@
 package com.pnj.disruptor;
 
-import com.lmax.disruptor.EventFactory;
-import com.lmax.disruptor.EventHandler;
-import com.lmax.disruptor.RingBuffer;
-import com.lmax.disruptor.WaitStrategy;
+import com.google.common.collect.Maps;
+import com.lmax.disruptor.*;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 
 /**
@@ -25,27 +25,48 @@ public class DisruptorProducer<V> {
     private ThreadFactory threadFactory;
     private ProducerType producerType;
     private WaitStrategy waitStrategy;
+    private EventHandler[] handlers;
+    private WorkHandler[] workHandlers;
 
 
     public void send(V v) {
         long seq = ringBuffer.next();
         try {
             EventWrap eventWrap = ringBuffer.get(seq);
-            eventWrap.setV(v);
+            eventWrap.setData(v);
         } finally {
             ringBuffer.publish(seq);
         }
     }
 
+    /**
+     * 类似广播模式, 即所有handlers都会收到消息
+     *
+     * @param handlers handler
+     */
     public void addHandler(EventHandler... handlers) {
         disruptor.handleEventsWith(handlers);
     }
 
-    public void init() {
-        this.disruptor = new Disruptor<EventWrap<V>>(eventFactory, bufferSize, threadFactory, producerType, waitStrategy);
+    /**
+     * 类似单播模式, 所有handlers里只有一个handler会接收到消息
+     *
+     * @param workHandlers handler
+     */
+    public void addWorkHandlers(WorkHandler... workHandlers) {
+        disruptor.handleEventsWithWorkerPool(workHandlers);
     }
 
-    public void start() {
+    public void init() {
+        this.disruptor = new Disruptor<EventWrap<V>>(eventFactory, bufferSize, threadFactory, producerType, waitStrategy);
+        if (handlers != null) {
+            addHandler(handlers);
+        }
+
+        if (workHandlers != null) {
+            addWorkHandlers(workHandlers);
+        }
+
         this.ringBuffer = disruptor.start();
     }
 
@@ -81,7 +102,6 @@ public class DisruptorProducer<V> {
         this.threadFactory = threadFactory;
     }
 
-
     public ProducerType getProducerType() {
         return producerType;
     }
@@ -98,4 +118,22 @@ public class DisruptorProducer<V> {
         this.waitStrategy = waitStrategy;
     }
 
+    public void setHandlers(EventHandler[] handlers) {
+        this.handlers = handlers;
+    }
+
+    public void setWorkHandlers(WorkHandler[] workHandlers) {
+        this.workHandlers = workHandlers;
+    }
+
+    @Override
+    public String toString() {
+        Map<String, Object> map = Maps.newHashMap();
+        map.put("producerType", producerType);
+        map.put("handlers", Arrays.asList(handlers));
+        map.put("workHandlers", Arrays.asList(workHandlers));
+        map.put("strategy", waitStrategy.getClass().getName());
+        map.put("capacity", bufferSize);
+        return map.toString();
+    }
 }

@@ -1,9 +1,6 @@
 package com.pnj.disruptor;
 
 import com.lmax.disruptor.EventHandler;
-import java.util.Objects;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageChannel;
 
 /**
  * <p>Description:</p>

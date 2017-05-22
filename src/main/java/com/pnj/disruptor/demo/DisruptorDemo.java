@@ -2,17 +2,17 @@ package com.pnj.disruptor.demo;
 
 import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.EventFactory;
-import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.dsl.ProducerType;
+import com.pnj.disruptor.DefaultDisruptorProducer;
 import com.pnj.disruptor.DisruptorEventHandler;
 import com.pnj.disruptor.DisruptorProducer;
 import com.pnj.disruptor.EventWrap;
 import java.util.concurrent.Executors;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.support.MessageBuilder;
 
 /**
- * <p>Description:</p>
+ * <p>Description:Disruptor + Spring Message + BlockingQueue Demo</p>
  * <p>Copyright: Copyright  (c) 2017</p>
  * <p>Company: SenseTime</p>
  * <p>Email: pengnanjing@sensetime.com</p>
@@ -21,53 +21,38 @@ import org.springframework.messaging.MessageChannel;
  * @date 17-5-19:下午2:04
  */
 public class DisruptorDemo {
-    DisruptorProducer<String> disruptorProducer;
-
-    private MessageChannel channel = new MessageChannel() {
-        @Override
-        public boolean send(Message<?> message) {
-//            System.out.println(message.getPayload().toString());
-            return true;
-        }
-
-        @Override
-        public boolean send(Message<?> message, long timeout) {
-//            System.out.println(message.getPayload().toString());
-            return true;
-        }
-    };
+    DisruptorProducer<Message> disruptorProducer;
 
     public void init() {
-        disruptorProducer = new DisruptorProducer<>();
-        disruptorProducer.setBufferSize(1024*1024);
-        disruptorProducer.setEventFactory(new EventFactory<EventWrap<String>>() {
+        disruptorProducer = new DefaultDisruptorProducer();
+        disruptorProducer.setBufferSize(1024 * 1024);
+        disruptorProducer.setEventFactory(new EventFactory<EventWrap<Message>>() {
             @Override
-            public EventWrap<String> newInstance() {
-                return new EventWrap<String>();
+            public EventWrap<Message> newInstance() {
+                return new EventWrap<Message>();
             }
         });
         disruptorProducer.setThreadFactory(Executors.defaultThreadFactory());
         disruptorProducer.setProducerType(ProducerType.MULTI);
         disruptorProducer.setWaitStrategy(new BlockingWaitStrategy());
-        disruptorProducer.init();
-        DisruptorEventHandler<String> disruptorConsumer = new DisruptorEventHandler<String>() {
+        DisruptorEventHandler<Message> disruptorConsumer = new DisruptorEventHandler<Message>() {
 
             @Override
-            public void onEvent(EventWrap<String> stringEventWrap, long l, boolean b) throws Exception {
-                System.out.println(stringEventWrap.getV());
+            public void onEvent(EventWrap<Message> stringEventWrap, long l, boolean b) throws Exception {
+                System.out.println(stringEventWrap.getData().getPayload());
             }
         };
 
-        DisruptorEventHandler<String> eventHandler = new DisruptorEventHandler<String>() {
+        DisruptorEventHandler<Message> eventHandler = new DisruptorEventHandler<Message>() {
             @Override
-            public void onEvent(EventWrap event, long sequence, boolean endOfBatch) throws Exception {
-                if((sequence % 2) == 0) {
-                    System.out.println("eventHandler: " + event.getV().toString() + "-" + sequence + "-" + endOfBatch);
+            public void onEvent(EventWrap<Message> event, long sequence, boolean endOfBatch) throws Exception {
+                if ((sequence % 2) == 0) {
+                    System.out.println("eventHandler: " + event.getData().getPayload() + "-" + sequence + "-" + endOfBatch);
                 }
             }
         };
         disruptorProducer.addHandler(disruptorConsumer, eventHandler);
-        disruptorProducer.start();
+        disruptorProducer.init();
     }
 
     public static void main(String[] args) throws InterruptedException {
@@ -75,8 +60,9 @@ public class DisruptorDemo {
         disruptorDemo.init();
         int i = 100;
         while (i-- != 0) {
-            disruptorDemo.disruptorProducer.send("hello world");
-//            Thread.sleep(1000);
+            String str = "Disruptor + Spring Message";
+            Message<String> message = MessageBuilder.withPayload(str).build();
+            disruptorDemo.disruptorProducer.send(message);
         }
     }
 
