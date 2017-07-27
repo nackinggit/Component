@@ -50,4 +50,5 @@ dependencies {
     compile group: 'com.lmax', name: 'disruptor', version: '3.3.6'
     // https://mvnrepository.com/artifact/org.springframework/spring-messaging
     compile group: 'org.springframework', name: 'spring-messaging', version: '4.3.8.RELEASE'
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.16.4'
 }

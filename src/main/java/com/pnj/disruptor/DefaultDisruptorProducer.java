@@ -9,8 +9,6 @@ import org.springframework.messaging.Message;
 /**
  * <p>Description: 默认数据类型为Spring-message</p>
  * <p>Copyright: Copyright  (c) 2017</p>
- * <p>Company: SenseTime</p>
- * <p>Email: pengnanjing@sensetime.com</p>
  *
  * @author nanjing
  * @date 17-5-19:下午4:52

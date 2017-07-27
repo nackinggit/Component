@@ -15,8 +15,6 @@ import org.joda.time.format.DateTimeFormatter;
 /**
  * <p>Description：日期工具类</p>
  * <p>Copyright：Copyright (c) 2017</p>
- * <p>Company：SenseTime</p>
- * <p>Email：jiayongfei@sensetime.com</p>
  *
  * @author jiayongfei
  * @date 17-3-20:下午2:20
